@@ -14,7 +14,7 @@ async function disconnectToDatabase() {
         await disconnect();
     }
     catch(error){
-        throw new Error("cannot connect");
+        throw new Error("cannot disconnect");
     }
 }
 
