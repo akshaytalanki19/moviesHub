@@ -16,10 +16,13 @@ export const validate =(validations:ValidationChain[] )=>{
     };
 };
 
+export const loginValidator =[
+    body("email").trim().isEmail().withMessage("Email is requierd"),
+    body("password").trim().isLength({min:6}).withMessage("password shioluid contain min 6 character")
+];
 
 export const signUpValidator =[
     body("name").notEmpty().withMessage("Name is required"),
-    body("email").trim().isEmail().withMessage("Email is requierd"),
-    body("password").trim().isLength({min:6}).withMessage("password shioluid contain min 6 character")
+    ...loginValidator,
 ];
 
