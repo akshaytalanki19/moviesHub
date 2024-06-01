@@ -19,7 +19,7 @@ export const verifyToken =async (req:Request,res:Response,next:NextFunction)=>{
     return jwt.verify(token,process.env.JWT_SECRET,(err,success)=>{
         if(err){
             reject(err.message);
-            return res.status(401).json({message:"Token Esxpired"})
+            return res.status(401).json({message:"Token Expired"})
         }
         else{
            

@@ -28,7 +28,7 @@ export const userSignup = async (req, res, next) => {
             signed: true,
             path: "/",
         });
-        const token = createToken(user._id.toString(), user.email, "7d");
+        const token = createToken(user._id.toString(), user.email, "1d");
         const expires = new Date();
         expires.setDate(expires.getDate() + 1);
         res.cookie(COOKIE_NAME, token, { path: "/", domain: "localhost", expires, httpOnly: true, signed: true });

@@ -1,68 +1,193 @@
-import { Box,Avatar,Typography, Button, IconButton } from '@mui/material'
-import   React, { useRef, useState } from 'react'
+import { Box,Avatar,Button } from '@mui/material'
+import React, {   useEffect, useLayoutEffect, useRef  } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { red } from '@mui/material/colors';
-import Chatitem from '../components/chat/Chatitem';
-import { IoMdSend } from 'react-icons/io'
-import { sendChatRequest } from '../helpers/api-communicator';
-type Message={
-  role:"user"|"assistant";
-  content:string;
-};
+import CustomizedInput from '../components/shared/CustomizedInput';
+import {toast} from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+
+interface MovieDetails {
+    Title: string;
+    Year: string;
+    Released: string;
+    Genre: string;
+    Runtime: string;
+    Actors: string;
+    Writer: string;
+    Language: string;
+    Poster: string;
+    imdbRating: string;
+    Plot: string;
+    Country: string;
+    Response: string;
+  }
+
 
 const Chat = () => {
-  const inputRef=useRef<HTMLInputElement | null>(null);
+    const navigate = useNavigate();
   const auth=useAuth();
-  const [chatMessages,setChatMessages]=useState([]);
-  const handleSubmit=async()=>{
-    const content=inputRef.current?.value as string;
-    if(inputRef && inputRef.current){
-      inputRef.current.value="";
+  let Name=" "
+const handleSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault(); 
+    const formData =new FormData(e.currentTarget);
+    const name=formData.get("movie-name") as string;
+    try{
+        toast.success("Searching movie",{id:"search"});
+        const result = await fetch(`https://www.omdbapi.com/?t=${(name)}&apikey=54af7829`);
+        const MovieDetails = await result.json();
+          showDetails(MovieDetails);
+        toast.success("movie found",{id:"Ok"});
+      }catch(error){
+        console.log(error);
+         toast.error("movie not found",{id:"no"});
+      }
+    
+};
+useEffect(() => {
+    if (!auth?.user) {
+      return navigate("/login");
     }
-    const newMessage:Message={role:"user",content};
-    setChatMessages((prev)=>[...prev, newMessage]);
-    const chatData= await sendChatRequest(content);
-    setChatMessages([...chatData.chats]);
-    //
+  }, [auth]);
+
+const showDetails = (info: MovieDetails) => {
+    const result = document.getElementById('result');
+    if (result) {
+      if (info.Response === 'True') {
+        result.innerHTML = `
+        <style>
+       
+        
+        .wrapper {
+          display: flex;
+          background-color: #000;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .movie-poster img {
+          max-width: 200px;
+          border-radius: 10px;
+          margin-right: 20px;
+        }
+        
+        .info {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          
+  flex-wrap: wrap;
+        }
+        
+        .movie-title {
+          font-size: 24px;
+          margin: 0 0 10px 0;
+          display: flex;
+          flex-wrap: wrap;
+        }
+        
+        .movie-info {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-wrap: wrap;
+         
+        }
+        
+        .movie-info li {
+          margin: 5px 0;
+          display: flex;
+          flex-wrap: wrap;
+
+        }
+        
+        .movie-info-1,
+        .movie-info-2 {
+          display: flex;
+         flex-wrap: wrap;
+         flex-column: column;
+        }
+        
+        .line1 {
+          font-weight: bold;
+        }
+        
+        .line2 {
+          margin-left: 10px;
+        }
+        
+        </style>
+          <div class="wrapper">
+            <div class="movie-poster">
+              <img src="${info.Poster}" alt="Loading..." >
+            </div>
+         
+          <div class="info">
+            <div class="movie-info-1">
+              <h1 class="movie-title">Name of a Movie : ${info.Title}</h1>
+              <ul class="movie-info">
+                <li class="year">Year: ${info.Year}</li>
+                <li class="released">Released: ${info.Released}</li>
+                <li class="country">Country: ${info.Country}</li>
+              </ul>
+            </div>
+            <div class="movie-info-2">
+              <p class="genre">
+                <span class="line line1">Genre:</span> 
+                <span class=" line line2">${info.Genre}</span><br>
+              </p>
+             
+              <p class="actors">
+                <span class="line line1">Actors: </span>
+                <span class="line line2">${info.Actors}</span>
+              </p>
+              <p class="writers">
+                <span class="line line1">Writer: </span>
+                <span class="line line2">${info.Writer}</span>
+              </p>
+              <p class="language">
+                <span class="line line1">Language:</span>
+                <span class="line line2">${info.Language}</span>
+              </p>
+              <p class="imdbRating">
+                <span class="line line1">IMDB Rating:</span>
+                <span class="line line2">${info.imdbRating}</span>
+              </p>
+             
+            </div>
+          </div>  
+          </div>
+        `;
+      } else {
+        throw new Error("Movie not found");
+      }
+    }
   };
-  return (<Box sx={{display:'flex',flex:1,width:"100%",height:"100%",mt:3,gap:3}}>
-    <Box sx={{display:{md:"flex", xs:"none", sm:"none"},flex:0.2,flexDirection:'column'}}>
-      <Box sx={{display:"flex",width:"100%",height:"60vh",bgcolor:"rgb(17,29,39)",borderRadius:5,
-        flexDirection:'column',mx:3,
-      }}>
-        <Avatar sx={{mx:"auto",my:2,bgcolor:"white",color:"black",fontWeight:700,}}>
-          {auth?.user?.name[0]}</Avatar>
-          <Typography sx={{mx:"auto",fontFamily:"work sans"}}>
-            you are talking to an chatbot
-          </Typography>
-          <Typography sx={{mx:"auto",fontFamily:"work sans",my:4,p:3}}>
-            you can ask different types of questions but avaoid sharing personal info
-          </Typography>
-          <Button sx={{width:"200px",my:'auto',color:'white',fontWeight:"700",borderRadius:3,mx:"auto",bgcolor:red[300],":hover":{
-            bgcolor:red.A400,
-          }}}>
-            Clear Conservation 
-          </Button>
-      </Box>
-    </Box>
-    <Box sx={{display:'flex',flex:{md:0.8,xs:1,sm:1},flexDirection:'column',px:3}}>
-      <Typography sx={{textAlign:"center",fontSize:"40px",color:"white",mb:2,mx:"auto",}}>
-           Model-Gpt-3.5-Turbo
-      </Typography>
-      <Box sx={{width:"100%",height:"60vh",borderRadius:3,mx:'auto',display:'flex',flexDirection:"column",overflow:'scroll',overflowX:"hidden",overflowY:"auto",scrollBehavior:"smooth",}}> 
-      
-      {chatMessages.map((chat)=>
-      //@ts-ignore
-      <Chatitem content={chat.content} role={chat.role}/>)}
-      </Box>
-      <div style={{width:"100%",borderRadius:8,backgroundColor:"rgb(17,27,39)",display:"flex",margin:'auto'}}>
-        {" "}
-        <input ref={inputRef} type='text' style={{width:"100%", backgroundColor:"transparent",padding:"10px",border:"none",outline:"none",color:"white",fontSize:"20px",}} />
-        <IconButton onClick={handleSubmit} sx={{ml:"auto",color:"white"}}><IoMdSend/></IconButton>
-      </div>
-    </Box>
-  </Box>
+
+ 
+  return (
+    <div >
+    <main>
+        <div >
+          <form onSubmit={(handleSubmit)}>
+            <CustomizedInput type="text" name="movie-name" label="Type Movie Name"/>
+            <Button type="submit" sx={{px:2,py:2,mt:2,width:"40px",height:"60px",borderRadius:2,bgcolor:"#00fffc",margin:'noraml', marginTop:0.1,
+              ":hover":{
+                bgcolor:"white",
+                color:"black"
+              },
+            }}
+            
+            ><FaSearch size={20}/></Button>
+            </form>
+        </div>
+    </main>
+    <div id="result"></div>
+    </div>
+   
   );
 };
 
+<script src="..\script\script.js"></script>
 export default Chat
