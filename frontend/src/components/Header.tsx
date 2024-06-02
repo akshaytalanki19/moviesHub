@@ -13,11 +13,15 @@ const Header = () => {
      <div>
        {auth.isLoggedIn?(
        <>
-      
-       <NavigationLink bg="#00fffc" to="/chat" text="playlist" textcolor="black" />
-       <Avatar sx={{bgcolor:"white",color:"black",fontWeight:700}}>
+        <Box 
+      display="flex" 
+      alignItems="center" 
+      justifyContent="flex-start"
+    >
+       <NavigationLink bg="#00fffc" to="/chat" text="playlist" textcolor="black"  />
+       <Avatar sx={{bgcolor:"#51538f",color:"white",fontWeight:700}}>
           {auth?.user?.name[0]}</Avatar> 
-       
+          </Box>
        </>):(<>
         <NavigationLink bg="#00fffc" to="/login" text="login" textcolor="black" />
        <NavigationLink  bg="#51538f" textcolor="white" to="/signup" text="signup" onClick={auth.logout}/>

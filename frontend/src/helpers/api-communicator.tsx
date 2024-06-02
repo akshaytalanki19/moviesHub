@@ -18,6 +18,15 @@ export const signupUser= async(name:string,email:string,password:string)=>{
     return data;
 };
 
+export const addPlayList=async(userid:string,imdbid:string)=>{
+    const res=await axios.post("/user/addplaylist",{userid,imdbid});
+    if(res.status!==201){
+        throw  new Error("unable to add to the playlist");
+    }
+    const data=await res.data;
+    return data;
+}
+
 export const checkAuthStatus= async()=>{
     const res=await axios.get("/user/auth-status");
     if(res.status!==200){

@@ -3,6 +3,7 @@ import User from "../models/User.js"
 import { hash,compare } from 'bcrypt';
 import { createToken } from "../utils/token-manager.js";
 import { COOKIE_NAME } from "../utils/constants.js";
+import playlist from "../models/playlist.js";
 
 export const getAllUsers =async(
     req:Request,
@@ -48,7 +49,22 @@ export const userSignup =async(
     return res.status(200).json({message:"error",cause:error.messsage});
    }
 };
-
+export const addPlayList=async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+)=>{
+    try{
+        const {userid,imdbid}=req.body;
+        const pl=new playlist(userid,imdbid);
+        await pl.save();
+        return res.status(201).json({message:"ok",userid:pl.userId,imdbid:pl.imdbid});
+   }catch(error)
+   {
+    console.log(error);
+    return res.status(200).json({message:"error",cause:error.messsage});
+   }
+};
 export const userLogin =async(
     req:Request,
     res:Response,

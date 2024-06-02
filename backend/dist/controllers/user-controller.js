@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import { hash, compare } from 'bcrypt';
 import { createToken } from "../utils/token-manager.js";
 import { COOKIE_NAME } from "../utils/constants.js";
+import playlist from "../models/playlist.js";
 export const getAllUsers = async (req, res, next) => {
     try {
         const users = await User.find();
@@ -33,6 +34,18 @@ export const userSignup = async (req, res, next) => {
         expires.setDate(expires.getDate() + 1);
         res.cookie(COOKIE_NAME, token, { path: "/", domain: "localhost", expires, httpOnly: true, signed: true });
         return res.status(201).json({ message: "ok", name: user.name, email: user.email });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(200).json({ message: "error", cause: error.messsage });
+    }
+};
+export const addPlayList = async (req, res, next) => {
+    try {
+        const { userid, imdbid } = req.body;
+        const pl = new playlist(userid, imdbid);
+        await pl.save();
+        return res.status(201).json({ message: "ok", userid: pl.userId, imdbid: pl.imdbid });
     }
     catch (error) {
         console.log(error);
