@@ -51,15 +51,15 @@ export const userSignup =async(
 };
 export const addPlayList = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userid, imdbid } = req.body;
-        console.log("Received data:", { userid, imdbid }); // Log received data
+        const { userId, imdbid } = req.body;
+        console.log("Received data:", { userId, imdbid }); // Log received data
 
-        if (!userid || !imdbid) {
-            console.log("Missing userid or imdbid");
+        if (!userId || !imdbid) {
+            console.log("Missing userid or imdbid",{ userId, imdbid });
             return res.status(400).json({ message: "User ID and IMDB ID are required" });
         }
         
-        const pl = new playlist({ userid, imdbid });
+        const pl = new playlist({ userId, imdbid });
         await pl.save();
         console.log("Playlist saved:", pl); // Log saved playlist
         return res.status(201).json({ message: "ok", userid: pl.userId, imdbid: pl.imdbid });

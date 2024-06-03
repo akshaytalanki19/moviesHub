@@ -45,10 +45,10 @@ const Chat = () => {
     };
 
     const handleAddToPlaylist = async (movieData: { imdbID: string }) => {
-        const userid = auth?.user?.name || "";
+        const userId = auth?.user?.email || "";
         const imdbID = movieData.imdbID;
         try {
-            await auth?.addPlayList(userid, imdbID);
+            await auth?.addPlayList(userId, imdbID);
             toast.success("Added to playlist", { id: "Ok" });
         } catch (error) {
             console.log(error);

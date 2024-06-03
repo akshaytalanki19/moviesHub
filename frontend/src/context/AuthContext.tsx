@@ -51,8 +51,8 @@ export const AuthProvider=({children}:{children:ReactNode})=>{
   };
   const logout=async()=>{};
   
-   const addPlayList=async(userid:string,imdbID:string)=>{
-    const data=await addToPlayList(userid,imdbID);
+   const addPlayList=async(userId:string,imdbID:string)=>{
+    const data=await addToPlayList(userId,imdbID);
    };
   const value={
     user,isLoggedIn,login,logout,signup,addPlayList,
