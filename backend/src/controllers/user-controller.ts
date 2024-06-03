@@ -49,22 +49,26 @@ export const userSignup =async(
     return res.status(200).json({message:"error",cause:error.messsage});
    }
 };
-export const addPlayList=async(
-    req:Request,
-    res:Response,
-    next:NextFunction
-)=>{
-    try{
-        const {userid,imdbid}=req.body;
-        const pl=new playlist(userid,imdbid);
+export const addPlayList = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userid, imdbid } = req.body;
+        console.log("Received data:", { userid, imdbid }); // Log received data
+
+        if (!userid || !imdbid) {
+            console.log("Missing userid or imdbid");
+            return res.status(400).json({ message: "User ID and IMDB ID are required" });
+        }
+        
+        const pl = new playlist({ userid, imdbid });
         await pl.save();
-        return res.status(201).json({message:"ok",userid:pl.userId,imdbid:pl.imdbid});
-   }catch(error)
-   {
-    console.log(error);
-    return res.status(200).json({message:"error",cause:error.messsage});
-   }
+        console.log("Playlist saved:", pl); // Log saved playlist
+        return res.status(201).json({ message: "ok", userid: pl.userId, imdbid: pl.imdbid });
+    } catch (error) {
+        console.log("Error in addPlayList:", error); // Log the error
+        return res.status(500).json({ message: "error", cause: error.message });
+    }
 };
+
 export const userLogin =async(
     req:Request,
     res:Response,

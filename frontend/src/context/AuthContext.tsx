@@ -1,5 +1,5 @@
 import {ReactNode, createContext, useContext, useEffect, useState} from 'react';
-import { checkAuthStatus, loginUser,signupUser } from '../helpers/api-communicator';
+import { addToPlayList, checkAuthStatus, loginUser,signupUser } from '../helpers/api-communicator';
 
 type User ={
     name:string;
@@ -52,7 +52,7 @@ export const AuthProvider=({children}:{children:ReactNode})=>{
   const logout=async()=>{};
   
    const addPlayList=async(userid:string,imdbID:string)=>{
-    const data=await addPlayList(userid,imdbID);
+    const data=await addToPlayList(userid,imdbID);
    };
   const value={
     user,isLoggedIn,login,logout,signup,addPlayList,

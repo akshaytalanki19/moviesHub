@@ -18,7 +18,7 @@ export const signupUser= async(name:string,email:string,password:string)=>{
     return data;
 };
 
-export const addPlayList=async(userid:string,imdbid:string)=>{
+export const addToPlayList=async(userid:string,imdbid:string)=>{
     const res=await axios.post("/user/addplaylist",{userid,imdbid});
     if(res.status!==201){
         throw  new Error("unable to add to the playlist");
